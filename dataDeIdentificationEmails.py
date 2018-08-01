@@ -46,7 +46,7 @@ def deidentification(data):
             # manager letter
             # seeing/see/saw firstname lastname
             # #/####, ##/####
-            i = re.sub(r'(?<=ordering\sprovider\s)[a-z]{3,11}\s[a-z]{4,9}', r'ORDERING_PROVIDER', i) # ordering provider(space)lastname firstname 
+            i = re.sub(r'(?<=ordering\sprovider\s)[a-z]{3,11}\s[a-z]{4,9}', r'ORDERING_PROVIDER', i) # ordering provider(space)lastname firstname
             i = re.sub(r'(?<=ordering\sprovider\s)[a-z]{3,11}\s[a-z]{4,9}m\sdr\smd', r'ORDERING_PROVIDER', i) # ordering provider(space)lastname firstname
             # lastname firstname dr md, lastname firstname m dr, lastname firstname dr,
             i = re.sub(r'[a-z]{2,10}\s[a-z]\s[a-z]{3,11}\s(dr\b|m\sdr\b|dr\smd\b|md\b|m\sd\b|ct\sascp\b|ct\b|cnp\b|md\smba\b|p\b|n\sp\b|np\b|np\sc\smsn\socn\b)', r'PHYSICIAN_NAME',i) # firstname m lastname 'md'/'m d'/'ct ascp'/'ct'
@@ -55,7 +55,7 @@ def deidentification(data):
             i = re.sub(r'(?<=patient\sname\s)[a-z]{4,11}\s[a-z]{4,10}\s[a-z]\b', r'PATIENT_NAME', i) # patient name(space)lastname firstname m
             i = re.sub(r'(?<=hospital\sname\s)[a-z]{4,11}\s[a-z]{4,10}\s[a-z]', r'PATIENT_NAME', i)
             i = re.sub(r'(?<=patient\sprofile\s)[a-z]{4,11}\s[a-z]\s[a-z]{4,10}\b', r'PATIENT_NAME', i)
-            i = re.sub(r'(?<=patient\sname\s)[a-z]{4,11}\s[a-z]{4,10}', r'PATIENT_NAME', i) # patient name(space)lastname firstname 
+            i = re.sub(r'(?<=patient\sname\s)[a-z]{4,11}\s[a-z]{4,10}', r'PATIENT_NAME', i) # patient name(space)lastname firstname
             i = re.sub(r'(?<=patient\sprofile\s)[a-z]{4,11}\s[a-z]{4,10}', r'PATIENT_NAME', i)
             i = re.sub(r'(?<=patient\sname\s)[a-z]\s[a-z]{4,11}\s[a-z]{4,10}\s[a-z]\b', r'PATIENT_NAME', i) # patient name(sp_______ ace)m lastname firstname m
             i = re.sub(r'(?<=grossing\sstaff\s)[a-z]{2,3}\s[a-z]{2,3}',r'GROSSING_STAFF', i) # grossing staff(space)xxx xx/x
@@ -95,7 +95,7 @@ def deidentification(data):
                 \bkeith\b|\banne\b|\bnick\b|\brob\b|\bsimone\b|\bscott\b|\bcarla\b|\bdeanna\b|\bheywood\b|\bcaroline\b|\bbarbara\b|\bjennifer\b|\bjodi\b|\bdoyle\b|             \
                 \bsheila\b|\bpatricia\b|\bjudy\b|\bmaryellen\b|\bweinfeld\b|\bstafford\b|\bnielsen\b|\bheydrich\b|\bstacey\b|\bfuerstman\b|\bdiana\b|\bmark\b|\bjody\b|\
                 \bsally\b|\blaura\b|\blinda\b|\bannemarie\b|\bkim\b|\bellen\b|\bwebber\b|\bilyse\b|\bsharon\b|\bkathryn\b|\bkathleen\b|j\smastroianni\snp', r'NAME', i)
-            # date & time 
+            # date & time
 
 
             i = re.sub(
@@ -103,7 +103,7 @@ def deidentification(data):
                 (?<![0-9]{2}\s[0-9]{2}\s[0-9]{2}\s[0-9]{2}\s)|(?<![0-9]\s[0-9]\s[0-9]{2}\s[0-9]\s)|(?<![0-9]{2}\s[0-9]{2}\s[0-9]\s[0-9]\s)|(?<![0-9]{2}\s[0-9]\s[0-9]{2}\s[0-9]\s)|                                   \
                 (?<![0-9]{2}\s[0-9]\s[0-9]\s[0-9]{2}\s)|(?<![0-9]\s[0-9]{2}\s[0-9]{2}\s[0-9]\s)|(?<![0-9]\s[0-9]{2}\s[0-9]\s[0-9]{2}\s)|(?<![0-9]\s[0-9]\s[0-9]{2}\s[0-9]{2}\s)|                                   \
                 (?<![0-9]{2}\s[0-9]{2}\s[0-9]{2}\s[0-9]\s)|(?<![0-9]\s[0-9]{2}\s[0-9]{2}\s[0-9]{2}\s)|(?<![0-9]{2}\s[0-9]\s[0-9]{2}\s[0-9]{2}\s)|(?<![0-9]{2}\s[0-9]{2}\s[0-9]\s[0-9]{2}s))(\b[1-9]|[0][1-9]|[1][0-2])[\s/]([0-9]|0[1-9]|[12][0-9]|3[01])[\s/]([0-9]{2,4})((?!(\s[0-9]{2}){3,})|(?!\spm|am))', r'DATE', i)
-                 # m/dd/yy, mm/dd/yy, mm/dd/yyyy (/ or ' ') 
+                 # m/dd/yy, mm/dd/yy, mm/dd/yyyy (/ or ' ')
 
 
 
@@ -154,18 +154,11 @@ for line in deidentified:
 f.close()
 
 '''
-take 10 mrn numbers and find the corresponding emails
-take this set and delete the rest, deidentify this set
-then write a script to run through the rest of the data and make it learn from the set that's anonymized
-adam will run it on his laptop - since he has access
-draft an email to hannah and megan about access to the vpn since the anonymization of emails is taking a while
-'''
-'''
-no hepatoegaly extremities no edema results DATE na 143 k 4 0 cl 115 h co2 23 bun 11 cre 0 7 egfr 101 2 egfr 
-122 5 glu 81 DATE anion DATE TIME11 wbc 3 1 l rbc 4 28 hgb 13 4 hct 38 1 mcv 89 0 mch 31 3 mchc 35 2 plt clumped 
+no hepatoegaly extremities no edema results DATE na 143 k 4 0 cl 115 h co2 23 bun 11 cre 0 7 egfr 101 2 egfr
+122 5 glu 81 DATE anion DATE TIME11 wbc 3 1 l rbc 4 28 hgb 13 4 hct 38 1 mcv 89 0 mch 31 3 mchc 35 2 plt clumped
 normal DATE mpv 10 0 rdw DATE TIME11 method automatic neut 46 lymph 49 h mono 4 eos 0 baso 1 bands 10 plt clmps
-present DATE aneut 1 42 l alymp 1 51 amons 0 12 aeos a 0 abaso a 0 DATE 2011 htube results DATE alt sgpt 15 ast 
-sgot 19 alkp 65 tbili 1 0 dbili 0 DATE 2010 alt sgpt 30 ast sgot 26 alkp 64 tbili 0 4 dbili 0 DATE 2010 chol 142 
-trig 39 hdl 55 ldl 79 chol hdl 2 5 rrsk ldl 0 DATE 2011 tsh 1 741 electrocardiogram DATE sinus rhythm at a rate of 
+present DATE aneut 1 42 l alymp 1 51 amons 0 12 aeos a 0 abaso a 0 DATE 2011 htube results DATE alt sgpt 15 ast
+sgot 19 alkp 65 tbili 1 0 dbili 0 DATE 2010 alt sgpt 30 ast sgot 26 alkp 64 tbili 0 4 dbili 0 DATE 2010 chol 142
+trig 39 hdl 55 ldl 79 chol hdl 2 5 rrsk ldl 0 DATE 2011 tsh 1 741 electrocardiogram DATE sinus rhythm at a rate of
 52 bpm 55 degrees intervals 0 14 0 DATE no evidence of chamber enlargement or past myocardial infarction in comparison
 '''

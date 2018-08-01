@@ -35,7 +35,7 @@ def preprocessing(data):
 
 ###########################################################################################
 
-training_set = preprocessing(traning_set_dict) 
+training_set = preprocessing(traning_set_dict)
 testing_set = preprocessing(testing_set_dict)
 train_setComm = [t[8] for t in training_set] # access the 9th tuple a.k.a. the reports/comments with the emails
 test_setComm = [t[8] for t in testing_set]

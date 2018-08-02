@@ -54,12 +54,14 @@ print("Num Test: {}\n".format(len(test_set)))
 trainText = [t[9] for t in train_set] # access the 10th tuple a.k.a. the reports/comments with the pathology
 trainY = [t[1] for t in train_set] # access the 2nd tuple a.k.a. EPIC_PMRN number
 testText = [t[8] for t in test_set] # access the 9th tuple a.k.a. the reports/comments with the emails
-testY = [t[1] for t in train_set] # access the 2nd tuple a.k.a. EPIC_PMRN number
+testY = [t[1] for t in test_set] # access the 2nd tuple a.k.a. EPIC_PMRN number
+
+print("Num testY: {}\n".format(len(testY)))
 
 # countVectorizer - transforming to matrix of bag-of-word vectors
 min_df = 5 # word has to appear at least 5 times to be in vocab
-max_features = 1000 # build vob only considering top max_features ordered by term frequency across data
-countVec = CountVectorizer(min_df = min_df, max_features = max_features)
+#max_features = 1000 # build vocab only considering top max_features ordered by term frequency across data
+countVec = CountVectorizer(min_df = min_df)
 ''' example: takes reports and maps to:
                         vocab, the number of times it appears
                      ########################################
@@ -67,14 +69,13 @@ list of train reports#
                      #
 '''
 
-# learn the vocab from train and test sets
-# get Xs out of your train set
+# learn the vocab from the train set, get Xs out of the train set
 trainX = countVec.fit_transform(trainText) # fit learns the vectorizer (i.e builds vocab etc), transform applies it
-testX = countVec.fit_transform(testText)
+testX = countVec.transform(testText)
 
 # understanding the shape/format of countVectorizer
-print("Shape of Train X {}\n".format(trainX.shape))
-print("Sample of the vocab:\n {}".format(np.random.choice(countVec.get_feature_names(), 20)))
+print("Shape of Train X: {}\n".format(trainX.shape))
+print("Sample of the vocab:\n {}\n".format(np.random.choice(countVec.get_feature_names(), 20)))
 
 # classification (logistic regression)
 # fit X to Y (train_set: reports to # corresponding with patient)
@@ -83,14 +84,6 @@ fitted = lreg.fit(trainX, trainY)
 
 # what is the accuracy of the logistic regression model?
 scoreTrain = lreg.score(trainX, trainY)
-print('Logistic Regression test accuracy: %.3f:\n' % scoreTrain)
+print('Logistic Regression test accuracy: %.3f\n' % scoreTrain)
 scoreTest = lreg.score(testX, testY) # take X, Y from test and score X to Y
-print('Logistic Regression test accuracy: %.3f:\n' % scoreTest)
-
-'''
-f = open("C:/Users/HE077/Downloads/testfile.txt", "w")
-for line in testY:
-    print(line, file = f)
-    print
-f.close()
-'''
+print('Logistic Regression test accuracy: %.3f\n' % scoreTest)

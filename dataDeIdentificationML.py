@@ -15,7 +15,7 @@ testing_set_file = "/media/hodaya/DISK_IMG/RPDR/RPDR/LMRNote.xml"
 
 # convert xml to dictionary using xmltodict
 with open(training_set_file) as train:
-    traning_set_dict = xml.parse(train.read())
+    training_set_dict = xml.parse(train.read())
 with open(testing_set_file) as test:
     testing_set_dict = xml.parse(test.read())
 
@@ -35,7 +35,7 @@ def preprocessing(data):
 
 ###########################################################################################
 
-training_set = preprocessing(traning_set_dict)
+training_set = preprocessing(training_set_dict)
 testing_set = preprocessing(testing_set_dict)
 train_setComm = [t[8] for t in training_set] # access the 9th tuple a.k.a. the reports/comments with the emails
 test_setComm = [t[8] for t in testing_set]

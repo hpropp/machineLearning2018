@@ -47,7 +47,8 @@ def deidentification(data):
             i = re.sub(r'\balicia\b|\bantonia\b|\bamy\b|\bemily\b|\bemily\sy\b|elizabeth\sk|\bcatherine\sa\b|a\salan\ssemine|semine\sa|angela\sc\b|ellen|ellen\sf\b|joan\se\b|christine\s(m|c)|christine|\bdonovan\sm\b|\bkay\b|terri\sl|\blisa\sm', r'NAME', i)
             i = re.sub(r'leaf\sdob\b', r'NAME\sdob', i)
             # check that DATE TIME works
-
+            # linda greengo
+            # please see clarient report for additional details left breast ACCESSION_NUMBER unamplified see comment 0 8 karyotype nuc ish 17cen d17z1xDATEq11 2 her 2xDATE result unamplified see comment of tiles examined 120
             i = re.sub(r'(?<=grossing\sstaff\s)[a-z]{2,3}\s[a-z]{2,3}',r'GROSSING_STAFF', i) # grossing staff(space)xxx xx/x
             i = re.sub(r'(?<=dictated\sby\s)[a-z]\s[a-z]{6,9}', r'PERSON_DICTATING', i) # informed by f lastname
             i = re.sub(r'(?<=diagnosis\sby\s)[a-z]{4,8}\s[a-z]\s[a-z]{4,9}\s(md\b|m\sd\b|ct\sascp\b|ct\b|cnp\b|md\smba\b|np\b|fnp\b|dpm\b|do\b)', r'PHYSICIAN_NAME', i) # informed by f lastname

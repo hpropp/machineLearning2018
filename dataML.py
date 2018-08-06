@@ -1,25 +1,25 @@
-import pandas as pd
 import re
 import nltk
 import sklearn
+import numpy as np
+import random
+import xmltodict as xml
+from sklearn.metrics import confusion_matrix
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import CountVectorizer
-import pickle
-import numpy as np
-import xmltodict as xml
-import random
+from sklearn.metrics import classification_report
 
-training_set_file = r"C:\Users\HE077\Downloads\Pathology (2).xml"
-testing_set_file = r"C:\Users\HE077\Downloads\LMRNote (1).xml"
+trainingSetFile = r"C:\Users\HE077\Downloads\Pathology (2).xml"
+testingSetFile = r"C:\Users\HE077\Downloads\LMRNote (1).xml"
 
-# convert xml to dictionary using xmltodict
-with open(training_set_file) as train:
-    training_set_dict = xml.parse(train.read())
-with open(testing_set_file) as test:
-    testing_set_dict = xml.parse(test.read())
+# convert xml to dictionary
+with open(trainingSetFile) as train:
+    trainDict = xml.parse(train.read())
+with open(testingSetFile) as test:
+    testDict = xml.parse(test.read())
 
-# preprocess the data (stripping special characters and lowercasing)
-def preprocessEmail(data):
+# preprocess data (strip special characters, lowercasing)
+def preprocessEmails(data):
     preprocessed = []
     for i, val in enumerate(data['dataroot']['LMRNote']): # i is report index
         empi, epic_pmrn  = val['EMPI'], val['EPIC_PMRN']
@@ -30,7 +30,7 @@ def preprocessEmail(data):
         preprocessed.append((empi, epic_pmrn, date, record_id, stat, cod, inst, subj, text))
     return preprocessed
 
-def preprocessPath(data):
+def preprocessPathology(data):
     preprocessed = []
     for i, val in enumerate(data['dataroot']['Pathology']): # i is report index
         empi, epic_pmrn, mrn_type, mrn,  = val['EMPI'], val['EPIC_PMRN'], val['MRN_Type'], val['MRN']
@@ -40,50 +40,55 @@ def preprocessPath(data):
         preprocessed.append((empi, epic_pmrn, mrn_type, mrn, num, date, typ, stat, desc, text))
     return preprocessed
 
-###########################################################################################
+trainSet = preprocessPathology(trainDict)
+testSet = preprocessEmails(testDict)
 
-# preprocess the pathologies and emails
-train_set = preprocessPath(training_set_dict)
-test_set = preprocessEmail(testing_set_dict)
+# the set lengths
+print("Num Train: {}\n".format(len(trainSet)))
+print("Num Test: {}\n".format(len(testSet)))
 
-# what are the lengths of each set?
-print("Num Train: {}\n".format(len(train_set)))
-print("Num Test: {}\n".format(len(test_set)))
+# start dividing into X and Y
+trainText = [t[9] for t in trainSet] # access the 10th tuple a.k.a. the reports/comments with the pathology
+trainY = [t[1] for t in trainSet] # access the 2nd tuple a.k.a. EPIC_PMRN number
 
-# begin dividing into X and Y
-trainText = [t[9] for t in train_set] # access the 10th tuple a.k.a. the reports/comments with the pathology
-trainY = [t[1] for t in train_set] # access the 2nd tuple a.k.a. EPIC_PMRN number
-testText = [t[8] for t in test_set] # access the 9th tuple a.k.a. the reports/comments with the emails
-testY = [t[1] for t in test_set] # access the 2nd tuple a.k.a. EPIC_PMRN number
-
-print("Num testY: {}\n".format(len(testY)))
+testText = [t[8] for t in testSet] # access the 9th tuple a.k.a. the reports/comments with the emails
+testY = [t[1] for t in testSet] # access the 2nd tuple a.k.a. EPIC_PMRN number
 
 # countVectorizer - transforming to matrix of bag-of-word vectors
-min_df = 5 # word has to appear at least 5 times to be in vocab
-#max_features = 1000 # build vocab only considering top max_features ordered by term frequency across data
-countVec = CountVectorizer(min_df = min_df)
-''' example: takes reports and maps to:
-                        vocab, the number of times it appears
-                     ########################################
-list of train reports#
-                     #
-'''
+min_df = 10 # word has to appear at least 5 times to be in vocab
+ngram_range = (1,10) # use ngrams to make model more accurate
+max_features = 1500 # build vocab only considering top max_features ordered by term frequency across data
+countVec = CountVectorizer(min_df = min_df, ngram_range = ngram_range, max_features = max_features)
 
-# learn the vocab from the train set, get Xs out of the train set
-trainX = countVec.fit_transform(trainText) # fit learns the vectorizer (i.e builds vocab etc), transform applies it
+# fit learns the vectorizer (i.e builds vocab from the train set)
+countVec.fit(trainText)
+
+# learn the vocab from the train set, get Xs
+trainX = countVec.transform(trainText) # transform applies fit
 testX = countVec.transform(testText)
 
-# understanding the shape/format of countVectorizer
+# understanding countVectorizer structure
 print("Shape of Train X: {}\n".format(trainX.shape))
-print("Sample of the vocab:\n {}\n".format(np.random.choice(countVec.get_feature_names(), 20)))
+print("Sample of the vocab:\n {}\n".format(np.random.choice(countVec.get_feature_names(), 50)))
 
 # classification (logistic regression)
-# fit X to Y (train_set: reports to # corresponding with patient)
-lreg = LogisticRegression()
-fitted = lreg.fit(trainX, trainY)
+lr = LogisticRegression(C = 0.01)
+
+# fit X to Y (trainSet: reports to # corresponding with patient)
+fitted = lr.fit(trainX, trainY)
 
 # what is the accuracy of the logistic regression model?
-scoreTrain = lreg.score(trainX, trainY)
+scoreTrain = lr.score(trainX, trainY)
 print('Logistic Regression test accuracy: %.3f\n' % scoreTrain)
-scoreTest = lreg.score(testX, testY) # take X, Y from test and score X to Y
+scoreTest = lr.score(testX, testY) # take X, Y from test and score X-->Y
 print('Logistic Regression test accuracy: %.3f\n' % scoreTest)
+
+# check the number of classes
+classNum = lr.classes_
+print('Logistic Regression number of classes: %.3f\n' % len(classNum))
+
+# understanding my results
+predictY = lr.predict(testX)
+confusion_matrix = confusion_matrix(testY, predictY)
+confusion_matrix
+print(classification_report(testY, predictY))
